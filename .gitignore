@@ -1,11 +1,9 @@
-#################
-## PyCharm
-#################
-
-.idea
-
-# Only need source file
-*.pyc
-
-# For Mac OS
+*.aux
+*.bbl
+*.blg
+*.dvi
+*.log
+*.out
+*.toc
+*.synctex.gz
 .DS_Store
