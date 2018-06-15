@@ -1,0 +1,11 @@
+#################
+## PyCharm
+#################
+
+.idea
+
+# Only need source file
+*.pyc
+
+# For Mac OS
+.DS_Store
