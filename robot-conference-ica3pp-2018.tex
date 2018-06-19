@@ -118,13 +118,13 @@ This section first introduces the relevant modules and simplified motion models 
 
 \subsection{Robot Motion Model and Its Dead Reackoning Principle}
 
-In this paper, a four-wheel differentially driven wheeled mobile robot is used to study the positioning problem of autonomous mobile robots in indoor environment. The driving motor is a DC motor. The two driving motors on one side are connected in reverse parallel and use the L298N motor driving module. Control the DC motor, and the mobile robot adopts the Raspberry Pi second-generation B-board (B.V1.2) as the main control chip. According to the driving mode of the mobile robot, the movement models of the two wheels on each side of the wheeled robot are the same. Therefore, the movement model of the mobile robot can be simplified to a left and right two-wheel differential driving mode. Figure \ref{fig-model-pdr} (a) shows the mobile robot. The simplified model, where (x, y) is the position coordinate of the mobile robot in the global coordinate system, $\Theta$ is the included angle between the mobile robot and the true north direction, ie the heading angle.
+In this paper, a four-wheel differentially driven wheeled mobile robot is used to study the positioning problem of autonomous mobile robots in indoor environment. The driving motor is a DC motor. The two driving motors on one side are connected in reverse parallel and use the L298N motor driving module. Control the DC motor, and the mobile robot adopts the Raspberry Pi second-generation B-board (B.V1.2) as the main control chip. According to the driving mode of the mobile robot, the movement models of the two wheels on each side of the wheeled robot are the same. Therefore, the movement model of the mobile robot can be simplified to a left and right two-wheel differential driving mode. Figure \ref{fig-model-dr} (a) shows the mobile robot. The simplified model, where (x, y) is the position coordinate of the mobile robot in the global coordinate system, $\Theta$ is the included angle between the mobile robot and the true north direction, ie the heading angle.
 
 \begin{figure}[!htbp]
 	\centering
 	\includegraphics[width=4.7in]{RobotMatch-MotionModel}
 	\caption{Simplified motion model and its dead reckoning principle for four-wheel differentially driven robot. (a) Motion model and self coordinate system. (b) Dead reckoning in the global coordinate system.}
-	\label{fig-model-pdr}
+	\label{fig-model-dr}
 \end{figure}
 
 Dead reckoning technology is widely used in the positioning of indoor autonomous mobile robots, and is particularly suitable for short-range positioning. The autonomous mobile robot used in this article has a built-in digital compass, three-axis accelerometer and gyroscope. The digital compass gives the initial attitude of the mobile robot. The accelerometer and the gyroscope can measure the movement acceleration and rotation angular velocity of the mobile robot, and then pass it. Integral operation can calculate the distance and heading change of the mobile robot, and then analyze the latest position and attitude of the mobile robot.
@@ -188,7 +188,7 @@ The horizontal movement attitude of the indoor autonomous mobile robot is distin
 
 \begin{figure}[!htbp]
 	\centering
-	\includegraphics[width=4.85in]{AiFiMatch-ActivityDecision}
+	\includegraphics[width=4.95in]{RobotMatch-ActivityDecision}
 	\caption{Decision tree for motion posture detection.}
 	\label{fig-posture}
 \end{figure}
@@ -407,9 +407,23 @@ When the starting point is unknown, the convergence performance of the algorithm
 
 Assume that the distribution of the heading angle estimation error is Gaussian and the average is 0. Based on the original data of the heading angle, a Gaussian distribution-based random number is added to simulate different degrees of error. Figure 7 shows the errors at different heading angles. The variation of the correct rate of position-dependent gesture recognition under the condition of the standard deviation of the distribution. It can be seen from Fig. 7 that the accuracy of position-dependent gesture recognition is stable under certain heading angle error conditions, but when the standard deviation of the error distribution reaches a certain level (T1 is 40 degrees and T2 is 30 degrees), The correct rate dropped rapidly.
 
+\begin{figure}[!htbp]
+	\centering
+	\includegraphics[width=3.976in]{RobotMatch-HeadingError}
+	\caption{Heading errors on the precision of mobile robot posture detection.}
+	\label{fig-headingerror}
+\end{figure}
+
 \subsection{Convergence Speed Analysis without Knowing the Starting Point}
 
 Under the condition that the starting point is unknown, after the mobile robot moves a certain distance, the algorithm can still converge and finally estimate the real-time position of the mobile robot. The distance before the convergence of the algorithm shows the convergence performance of the algorithm. In order to evaluate the convergence performance of the proposed map matching algorithm, we compare the proposed map matching algorithm with the semimatch algorithm proposed in [18]. The semMatch algorithm has certain similarities with the algorithm presented in this paper. The hidden Markov model is also used to implement map matching operations. However, the details of the model are slightly different.
+
+\begin{figure}[!htbp]
+	\centering
+	\includegraphics[width=3.276in]{RobotMatch-Convergence}
+	\caption{Distance traveled before convergence for each trajectory.}
+	\label{fig-convergence}
+\end{figure}
 
 Using the same decision tree model to identify the pose types in the trajectory of a moving robot, Figure 8 shows the convergence of the two algorithms. On the one hand, for the T1 path, both algorithms reach the convergence state after passing through two pose-related positions. However, the algorithm proposed in this paper needs to observe the subsequent path segment after identifying the corresponding pose type, so the convergence performance is improved. Slightly worse, when it reaches the convergence state, the mobile robot moves 1.9 meters more. On the other hand, for the T2 path, the algorithm proposed in this paper reaches the convergence state shortly after the recognition of the first position-related pose, and the corresponding seamatch algorithm does not converge due to the symmetry of the interior structure. The infinity is denoted by the infinity large size ∞. The main reason is the difference in the model definition of the two map matching algorithms. The implicit state of the map matching algorithm proposed in this paper is the straight line segment in the indoor road network. In the T2 path, the mobile robot Firstly, a path segment with a long enough length is combined with the subsequent recognition of the first position-related pose to achieve the convergence of the algorithm.
 
@@ -418,12 +432,26 @@ Using the same decision tree model to identify the pose types in the trajectory 
 
 Under the condition that the starting point is known, the localization algorithm proposed in this paper does not need to pass the motion trajectory matching stage to converge. After convergence, the algorithm can track the moving trajectory of the mobile robot in real time. We use the Euler distance between the real physical position of the autonomous mobile robot and the position estimate given by the algorithm to analyze the real-time positioning performance. Figure 9 shows the positioning of autonomous mobile robots with increasing distances on both T1 and T2 paths. Error variation.
 
+\begin{figure}[!htbp]
+	\centering
+	\includegraphics[width=5.076in]{RobotMatch-OnlineError}
+	\caption{Online positioning errors for each trajectory.}
+	\label{fig-online}
+\end{figure}
+
 When the motion trajectory does not include posture related position, the map matching assisted positioning technology proposed in this paper is equivalent to the traditional dead reckoning technology, but after identifying the relevant position of the pose, the coordinates of the known pose related position can be used to move the coordinates. The real-time position of the robot is corrected. The real-time positioning results of the mobile robot on the two paths T1 and T2 shown in Fig. 9 are verified by the positioning results on both paths. For the T1 path, the average positioning error is 4.0. The meter falls to 2.49 meters, while for the T2 path, the average positioning error decreases from 6.58 meters to 3.39 meters. From the above trend, it can be deduced that in the actual environment, the greater the density of posture-related locations, the more obvious the improvement of the traditional dead reckoning technology is.
 
 
 \subsection{Influence of Acceleration Errors}
 
 From the principle of dead reckoning technology described in section 2.1 of this paper, we know that the acceleration error has a quadratic relationship with the error of the moving distance of the mobile robot. Therefore, the acceleration error is one of the main sources of accumulated error in dead reckoning technology. This section simulates different acceleration error scenarios by adding Gaussian random generation numbers of different standard deviations to the original acceleration data, and then analyzes the influence of the acceleration error on the positioning algorithm proposed in this paper.
+
+\begin{figure}[!htbp]
+	\centering
+	\includegraphics[width=3.676in]{RobotMatch-AcceError}
+	\caption{Acceleration value errors on the mean of positioning errors for each trajectory.}
+	\label{fig-acce-error}
+\end{figure}
 
 Figure 10 shows the average positioning error of the mobile robots in the two paths T1 and T2 under different standard deviation values. It can be seen from the figure that, on the one hand, based on a slight increase in the acceleration error, the dead reckoning is based on dead reckoning. The positioning method of the technique rapidly increases the average positioning error, which means that the positioning performance of dead reckoning technology is very sensitive to the acceleration error; on the other hand, compared with the traditional dead reckoning technology, the same acceleration error changes. The positioning error of the positioning algorithm proposed in this paper changes more smoothly, which shows that the positioning algorithm has a certain degree of robustness to the acceleration error.
  
