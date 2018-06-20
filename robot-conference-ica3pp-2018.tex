@@ -20,8 +20,8 @@
 \usepackage{bbding}
 \usepackage{url}
 
-\urldef{\mailsa}\path|{yuwenping}@mail.nankai.edu.cn|
-\urldef{\mailsb}\path|{zhangjz, xujd, xuyw}@nankai.edu.cn|
+\urldef{\mailsb}\path|{yuwenping}@mail.nankai.edu.cn|
+\urldef{\mailsa}\path|{zhangjz, xujd, xuyw}@nankai.edu.cn|
 %% ------ packages for authors format  ------ %%
 
 %% ------ packages for subfigures  ------ %%
@@ -61,7 +61,7 @@
 %
 %%\author{Wenping Yu\inst{1}}
 
-\author{Jianzhong Zhang$^2$ $^($\Envelope$^)$ \and Wenping Yu$^1$ \and Jingdong Xu$^2$ \and Yuwei Xu$^2$}
+\author{Jianzhong Zhang$^1$ $^($\Envelope$^)$ \and Wenping Yu$^2$ \and Jingdong Xu$^1$ \and Yuwei Xu$^1$}
 %
 \authorrunning{Wenping Yu et al.} % abbreviated author list (for running head)
 %
@@ -77,18 +77,18 @@ $^2$\mailsb\\}
 
 \begin{abstract}
 
-Position information is one of basic elements for context awareness of autonomous mobile robots. This paper studies the positioning algorithm of autonomous mobile robots suitable for search and rescue in dark building corridors and underground mine tunnels when an emergency occurs, and proposes a novel map matching aided positioning algorithm based on Hidden Markov Model. This algorithm does not rely on a camera, and only uses the inertial sensors installed in mobile robot and the indoor map to realize the fusion of dead reckoning and map matching. Firstly, it recognizes the position-related motion pattern during the motion of wheeled mobile robot, and then the motion trajectory is divided into a sub-trajectory sequence. By matching the sub-trajectory sequence with the indoor map, the proposed algorithm achieves accurate tracking and positioning of mobile robots. In order to verify the effectiveness of our proposed algorithm, this paper adopts four-wheel differentially driven robot to conduct experimental analysis in an actual indoor scenario. The experimental results show that compared with the traditional dead reckoning technology, this algorithm can distinctly reduce the average positioning error of mobile robot, and it is robust to heading angle and acceleration noises within a certain error range.
+Position information is one of basic elements for context awareness of autonomous mobile robots. This paper studies the positioning algorithm of autonomous mobile robots suitable for search and rescue in dark building corridors and underground mine tunnels when an emergency occurs, and proposes a novel map matching aided positioning algorithm based on Hidden Markov Model. This algorithm does not rely on a camera, and only uses the inertial sensors installed in mobile robot and the indoor map to realize the fusion of dead reckoning and map matching. Firstly, it detects the position-related motion postures during the motion process, and then the motion trajectory is divided into a sub-trajectory sequence. By matching the sub-trajectory sequence with the indoor map, the proposed algorithm achieves tracking and positioning of mobile robots. In order to verify the effectiveness of our proposed algorithm, this paper adopts four-wheel differentially driven robot to conduct experimental analysis in an actual indoor scenario. The experimental results show that compared with the traditional dead reckoning technology, this algorithm can distinctly reduce the average positioning error of mobile robot, and it is robust to heading angle and acceleration noises within a certain error range.
 
 \keywords{Mobile Robot \and Indoor Positioning \and Hidden Markov Model \and Motion Pattern Detection.}
 \end{abstract}
 %
 \section{Introduction}
 %
-With the advancement of artificial intelligence technology, network technology and sensor technology, the research and application of autonomous mobile robots have made remarkable progress in recent years. Indoor autonomous mobile robots are increasingly integrated into people's daily lives [1]. Autonomous mobile robots can be used not only in large-scale applications in modern intelligent warehouses, home services and many other aspects, but also in detection and search and rescue in corridors of complex buildings that are outages due to fire accidents, subway passages, and underground mines. . Therefore, the research of indoor autonomous mobile robot technology has gradually become a hot topic, and many domestic research institutes such as Tsinghua University, Harbin Institute of Technology, Nankai University, South China University of Technology are committed to the research and development of indoor autonomous mobile robots [2-6 ]. The autonomous positioning of the mobile robot is a process in which the robot autonomously determines its position in the working environment, and is one of the most basic problems in improving the autonomous capabilities of the mobile robot.
+With the advancement of artificial intelligence, network and sensor technologies, the research and application of autonomous mobile robots have made remarkable progress in recent years. Indoor autonomous mobile robots are increasingly integrated into people's daily lives \cite{Garcia2007The}. Autonomous mobile robots can be extensively used not only in modern intelligent warehouses, home services and many other aspects, but also in corridors of complex buildings, tunnels of subway and underground mines when accidents occur. Therefore, the research of indoor autonomous mobile robot technology has gradually become a hot topic, and many domestic research institutes such as Tsinghua University, Harbin Institute of Technology, Nankai University and South China University of Technology are committed to the research and development of indoor autonomous mobile robots \cite{Wu2005Robust,Wu2015A,Yang2015An,yuan2009sprb,yuningbo2017RGBDbae}. The autonomous positioning of the mobile robot is a process in which the robot autonomously determines its position in the working environment, and is one of the most basic problems in improving the autonomous capabilities of the mobile robot.
 
-In terms of outdoor positioning, the Global Positioning System (GPS) has become a widely used positioning technology for mobile robots. In terms of indoor positioning, due to the blocking and interference of GPS signals on the external walls of buildings and indoor complex electromagnetic environment, indoor mobile robots There is no universal solution to the positioning problem [7-8]. Currently, researchers have proposed a variety of positioning methods for indoor autonomous mobile robots, including navigation beacon-based positioning [9], computer vision positioning [10-11], dead reckoning positioning [12], map matching positioning [ 13-14] and synchronous positioning and map creation (SLAM) [15-16] and so on. Positioning based on navigation beacons relies on deployed feature signals in a range of environments to provide stable and accurate location information, but requires high deployment and maintenance costs. Dead reckoning positioning uses inertial sensors and encoders to provide relatively accurate phase positions over short distances, but there is cumulative error that gradually increases as the distance travels, and the robot's initial pose needs to be known in advance. Map matching positioning uses known indoor maps to construct topological maps, feature maps, and other abstract maps, and then the position of the mobile robot is obtained by matching the robot motion trajectory with the indoor path. From the map matching positioning realization principle, the real-time performance is relatively poor. Shortcomings. The SLAM technology has unique advantages in the face of unknown environments and can provide indoor planes or 3D maps while providing positioning [17]. However, this method requires mobile robots equipped with more complex sensor devices, such as infrared, ultrasonic radar, and RGBD vision systems. Therefore, it has higher implementation cost.
+In terms of outdoor positioning, the Global Positioning System (GPS) has become a widely used positioning technology for mobile robots. However, in terms of indoor positioning, due to the blocking and interference of GPS signals by the external walls of buildings and indoor complex electromagnetic environment, there is no universal solution to the positioning problem of indoor mobile robots \cite{Bachrach2011RANGE,bao2013indoor}. Currently, researchers have proposed a variety of positioning methods for indoor autonomous mobile robots, including navigation beacon-based positioning \cite{Tang2014multiary}, computer vision-based positioning \cite{lu2015visual,gao2017unsupervised}, dead reckoning positioning \cite{kim2015dead}, map matching positioning \cite{grisetti2007improved,cheng2015topological} and simultaneous localization and mapping (SLAM) \cite{de2014feature,havangi2014square}, and so on. Positioning techniques based on navigation beacons rely on a series of deployed feature signals to provide stable and accurate location information, but require high deployment and maintenance costs. Dead reckoning technique uses inertial sensors or encoders to provide relatively accurate positions over short distances, but exists cumulative error that gradually increases as the distance travels, and the robot's starting point needs to be known in advance. Map matching positioning uses known indoor maps to construct topological maps, feature maps, and other abstract maps, and then the position of the mobile robot is obtained by matching the robot motion trajectory with the indoor maps. The real-time performance of map matching is relatively poor according to its realization principle. The SLAM technology has unique advantages in the face of unknown environments and can provide indoor floor plans or 3D maps while providing positioning \cite{richter2018bayesian}. However, this method requires mobile robots equipped with more complex sensor devices, such as infrared, ultrasonic radar and RGB-D vision systems. Therefore, it has higher implementation cost.
 
-Complex corridors, subway station passages, or underground mines often have multiple passageways, similar to “mazes”. In the event of a fire or other unexpected accident, the power supply is damaged, the communication infrastructure cannot be used, smoke, etc. It poses challenges for the positioning of autonomous mobile robots. Due to limitations in work environment or deployment conditions, it is difficult to establish visual or wireless navigation beacons in advance. Therefore, positioning technology based on navigation beacons is not suitable; the effects of high temperature and smoke on the indoor environment, cameras and other difficult to provide image information, computer The failure of visual positioning technology; the timeliness of SLAM technology can not meet the urgent need for time factors in the above scenarios. In response to these problems, the paper introduces a hidden Markov model (HMM) that does not rely on a camera. It only uses inertial sensors (accelerometers, gyroscopes, and magnetometers) installed in autonomous mobile robots and known indoor maps to achieve dead reckoning. The combination of mapping technology and map matching technology.
+Corridors of buildings, subway station tunnels and underground mines often have complex passageways, similar to “mazes”. In the event of an accident such as a fire, the power supply is damaged, the communication infrastructure become unusable and smoke and dust cause the lack of indoor lighting, and so on. All these situations pose challenges for the positioning of indoor autonomous mobile robots. Due to limitations in working environment or deployment conditions, it is difficult to establish visual or wireless navigation beacons in advance. Therefore, positioning technology based on navigation beacons is not suitable; the influence of high temperature and smoke on the indoor environment makes it difficult for cameras to provide image information, visual positioning technology fails; the timeliness of SLAM technology can not meet the urgent need for time factors in the above scenarios. In response to these problems, this paper introduces a hidden Markov model (HMM) based map matching algorithm that does not rely on a camera, only uses inertial sensors (accelerometers, gyroscopes, and magnetometers) installed in autonomous mobile robots and known indoor maps to effectively track and position mobile robots.
 
 %In summary, this paper's mainly contributions are as follows:
 %\vspace{-10pt}
@@ -108,13 +108,13 @@ Complex corridors, subway station passages, or underground mines often have mult
 %	\item we present the architecture of AiFiMatch: a map matching algorithm based on activity detection and crowd-sourced Wi-Fi.
 %\end{itemize}
 
-The remainder of this paper is organized as follows: Section II reviews the related work in the literature. Section III gives an overview of the AiFiMatch system and its preprocessing components. Then, we detail the proposed HMM-based map matching algorithm in Section IV. Section V shows the experimental results and analysis of the AiFiMatch system. Finally, Section VI concludes this paper.
+The remainder of this paper is organized as follows: Section II introduces the robot motion model, the overview of proposed algorithm and its preprocessing components. Then, we detail the proposed HMM-based map matching algorithm in Section III. Section IV shows the experimental results and analysis. Finally, Section V concludes this paper.
 
 \section{Robot Motion Model and Positioning Method}
 
-In the field of indoor autonomous mobile robot positioning, dead reckoning technology and map matching technology have a good complementarity. This paper proposes a map matching-assisted positioning method based on moving trajectory sequences of mobile robots to realize the fusion of the above two technologies. The positioning method uses stairs, corridor corners, etc. in the indoor environment as virtual landmarks. When the mobile robot passes through these landmark locations, the inertial sensor data will show a specific pattern. Therefore, in the text, the above landmark location is called a posture correlation. Position, when the robot's movement distance is short, the dead reckoning technology can give the real-time position of the robot. In the robot's movement distance is long, the robot's motion trajectory can be divided into multiple trajectory fragments according to the landmark position, continuous trajectory fragment The track sequence is composed of hidden Markov models. The above trajectory sequence can be matched to the corresponding path in the indoor map, and then the position estimation of the mobile robot is given. Further, when the robot's motion trajectory is long enough, the robot's When the initial position is unknown, the absolute position of the mobile robot can still be estimated.
+In the field of indoor autonomous mobile robot positioning, dead reckoning technology and map matching technology have a good complementarity. This paper proposes a map matching-assisted positioning method based on motion trajectory sequence of mobile robot to realize the fusion of the above two technologies. The positioning algorithm uses stairs and corridor corners in the indoor environment as virtual landmarks. When the mobile robot passes through these landmarks, the inertial sensor data will show a specific pattern. Therefore, in this paper, the above landmarks are called posture-related positions. When the robot's movement distance is short, the dead reckoning technology can give the real-time position of the robot. When the robot's movement distance is long, the robot's motion trajectory can be divided into multiple sub-trajectories according to the landmarks, consecutive sub-trajectories form sub-trajectory sequence. With the help of HMM model, the above sub-trajectory sequence can be matched to the corresponding road in the indoor map, and then the position estimation of the mobile robot is given. Further, when the robot's motion trajectory is long enough, the absolute position of the mobile robot can still be estimated even without knowing the robot's starting point.
 
-This section first introduces the relevant modules and simplified motion models of the four-wheel differential-driven autonomous mobile robot used in subsequent experiments, and then derives the dead reckoning technology based on the motion model. Then the overall architecture of the fusion positioning method proposed in this paper is introduced. And the indoor map abstraction module, the final description of the mobile robot motion gesture recognition and use of the four-wheel differential drive robot designed in this paper to conduct a related pre-experiment. The trajectory matching technology based on Hidden Markov Models is the core module of the positioning method, which will be discussed in detail in the next section.
+This section firstly introduces the relevant modules and simplified motion models of the four-wheel differential-driven autonomous mobile robot used in subsequent experiments, and then derives the dead reckoning technology based on the motion model. Then the overall architecture of the fusion positioning method proposed in this paper is introduced. And the indoor map abstraction module, the final description of the mobile robot motion gesture recognition and use of the four-wheel differential drive robot designed in this paper to conduct a related pre-experiment. The trajectory matching technology based on Hidden Markov Models is the core module of the positioning method, which will be discussed in detail in the next section.
 
 \subsection{Robot Motion Model and Its Dead Reackoning Principle}
 
@@ -129,10 +129,10 @@ In this paper, a four-wheel differentially driven wheeled mobile robot is used t
 
 Dead reckoning technology is widely used in the positioning of indoor autonomous mobile robots, and is particularly suitable for short-range positioning. The autonomous mobile robot used in this article has a built-in digital compass, three-axis accelerometer and gyroscope. The digital compass gives the initial attitude of the mobile robot. The accelerometer and the gyroscope can measure the movement acceleration and rotation angular velocity of the mobile robot, and then pass it. Integral operation can calculate the distance and heading change of the mobile robot, and then analyze the latest position and attitude of the mobile robot.
 
-In order to determine the position and attitude of the mobile robot in the plane and establish the global right angle coordinate system $OXY$, it may be assumed that the initial position $(x_0, y_0)$ is the origin of the coordinates and the initial attitude is the positive direction of the $X$-axis. Then the position and posture of the K time mobile robot can be expressed by vector. In the current moment, the instantaneous velocity of the mobile robot is represented by the angle between the moving direction of the mobile robot and the positive direction of the $X$-axis, and the transverse ordinates of the mobile robot in the global coordinate system, as shown in Figure \ref{fig-model-pdr} (b). When the update cycle of sensor data is very small, if the update cycle of the sensor is about 5 milliseconds in this paper, in one cycle, the trajectory of the mobile robot can be approximated to a straight line, then the position of the K time mobile robot can be recursively obtained by the Equation \ref{equ_pdr}.
+In order to determine the position and attitude of the mobile robot in the plane and establish the global right angle coordinate system $OXY$, it may be assumed that the initial position $(x_0, y_0)$ is the origin of the coordinates and the initial attitude is the positive direction of the $X$-axis. Then the position and posture of the K time mobile robot can be expressed by vector. In the current moment, the instantaneous velocity of the mobile robot is represented by the angle between the moving direction of the mobile robot and the positive direction of the $X$-axis, and the transverse ordinates of the mobile robot in the global coordinate system, as shown in Figure \ref{fig-model-dr} (b). When the update cycle of sensor data is very small, if the update cycle of the sensor is about 5 milliseconds in this paper, in one cycle, the trajectory of the mobile robot can be approximated to a straight line, then the position of the K time mobile robot can be recursively obtained by the Equation \ref{equ_dr}.
 
 \begin{equation}
-\label{equ_pdr}
+\label{equ_dr}
 \left( {\begin{array}{*{20}{c}}
 	{{v_k}}\\
 	{{\theta _k}}\\
@@ -315,75 +315,67 @@ By recording the back-pointer, at time k, the most likely hidden state sequence,
 
 AiFiMatch algorithm is summarized with the pseudocode in Algorithm \ref{alg_aifi}.  
 
-\vspace{-10pt}
 \begin{algorithm}[H]
-	\caption{AiFiMatch online map matching algorithm}
+	\caption{Motion trajectory sequence-based map matching algorithm}
 	\label{alg_aifi}
 	\begin{algorithmic}[1]
+		
 		\renewcommand{\algorithmicrequire}{\textbf{Input:}}
 		\renewcommand{\algorithmicensure}{\textbf{Output:}}
 		\REQUIRE Sensor data up to current time t: $data_{1:t}$
-		\REQUIRE Abstract Indoor Floor Plan: $fp$
-		\REQUIRE Hidden State Sequence and Its Length up to last time $t-1$: $S_{k}(t-1)$, $k$
-		\REQUIRE Array of Viterbi variable and backward pointer: ${VtbArr}_{k}(t-1)$
-		\ENSURE Pedestrian's position estimation at current time $t$: $Ped_{loc}(t)$
-		\ENSURE Optimal state sequence estimation at current time $t$: $Q(t)$
-		\STATE ${Ped_{AT}(t)}, at \leftarrow activity\_detect({data_{1:t}})$
-		\IF{$Ped_{AT}(t)\ != \ None$}  
-		\STATE ${st} \leftarrow {at}$  
+		\REQUIRE Abstraction of indoor floor plan: $fp$
+		\ENSURE Optimal state sequence estimation at current time $t$: $Q_t$
+		\ENSURE Mobile robot's position and posture estimation at current time $t$: ${Rob}_t$
 		
-		\STATE // Calculate the transition probability
-		\STATE $S(t) \leftarrow [\ ]$
-		\FOR{$s_i\ \in\ S_{k}(t-1)$}
-		\STATE // Select next segments according to $fp$
-		\STATE $S^{i}(t) \leftarrow next(fp,s_i)$
-		\STATE // Extract segments according to Wi-Fi data
-		\STATE $S^{i,wifi}(t) \leftarrow extract(data_{st:t}^{wifi},S^{i}(t))$
-				
-		\algstore{myalg}
-	\end{algorithmic}
-\end{algorithm}
+		\renewcommand{\algorithmicrequire}{\textbf{Define:}}
+		\REQUIRE Starting time of current sub-trajectory: $st$, the initial value of $st$ is $0$
+		\REQUIRE Length of current motion trajectory sequence: $k$, the initial value of $k$ is $1$
+		\REQUIRE Array of Viterbi variables and backward pointers: ${Vtb}_{k}(t)$
+		\REQUIRE Candidate road segment list at current time: $S(t)$
 		
-\begin{algorithm}[t]
-	\begin{algorithmic}[1]
-		\algrestore{myalg}		
-
-		\FOR{$s_j\ \in\ S^{i,wifi}(t)$}
-		\STATE $tr[i][j] \leftarrow p(s_j|s_i,{Ped_{AT}(t)})$
-		\ENDFOR
-		\STATE $S(t).extend(S^{i,wifi}(t))$
-		\ENDFOR
 		
-		\STATE // Calculate the observation probability		    
-		\STATE ${z_t} \leftarrow dead\_reckon(data_{st:t})$
-		\FOR{$s_i\ \in\ S(t)$}
-		\STATE $ob[i]\ \leftarrow\ p(z_t|s_i)$
-		\ENDFOR
-		\STATE ${VtbArr}_{k+1}(t) \leftarrow viterbi({VtbArr}_{k}(t-1), ob[\ ], tr[\ ][\ ])$
-		\STATE $k \leftarrow k+1$
-		\STATE $S_{k}(t) \leftarrow S(t)$
+		\STATE ${{Rob}_{t}.{MA}}, at \leftarrow Posture\_Detect({data_{1:t}})$
 		
-		\ELSE // Not a location-related activity
-		\STATE $ob \leftarrow [\ ],\ S_{k}(t) \leftarrow S_{k}(t-1)$
-		\STATE // Update the observation probability
-		\STATE ${z_t}=dead\_reckon(data_{st:t})$
-		\FOR{$s_i\ \in\ S_{k}(t)$}
-		\STATE $ob[i]\ \leftarrow\ p(z_t|s_i)$
-		\ENDFOR
-		\STATE ${VtbArr}_{k}(t) \leftarrow viterbi({VtbArr}_{k}(t-1), ob[\ ])$
-		\ENDIF	
+		\IF{${{Rob}_{t}.{MA}}\ != \ None$}  
 		
-		\STATE // Optimal State Sequence
-		\STATE ${Q(t)} \leftarrow None$
-		\IF{$check\_status(VtbArr^{k}(t))=Convergence$}
-		\STATE ${Q(t)} \leftarrow viterbi\_decode(VtbArr^{k}(t))$
+			\STATE ${st} \leftarrow {at}$  
+			
+			\STATE // Calculate the transition probability TR[ ][ ]
+			\FOR{$s_i\ in\ S(t-1)$}
+			\STATE $S^i(t) \leftarrow Candidate\_Select(fp, s_i)$
+			\FOR{$s_j\ in\ S^i(t)$}
+			\STATE TR[i][j] $\leftarrow p(s_j|s_i,Rob_t.MA)$
+			\ENDFOR
+			\STATE $S(t).extend(S_i(t))$
+			\ENDFOR
+			
+			\STATE // Calculate the observation probability OB[ ]
+			\STATE $z(t) \leftarrow Dead\_Reckoning(data_{st:t})$
+			\FOR{$s_i\ in\ S(t)$}
+			\STATE OB[i] $\leftarrow p(z(t)|s_i)$
+			\ENDFOR
+			\STATE $Vtb_{k+1}(t) \leftarrow Viterbi\_Calculate(Vtb_{k}(t-1)$, OB[ ], TR[ ][ ]$)$
+			\STATE $k$+=1
+		
+		\ELSE // Not a position-related posture
+		
+			\STATE // Calculate the observation probability OB[ ]
+			\STATE $z(t) \leftarrow Dead\_Reckoning(data_{st:t})$
+			\STATE $S(t) \leftarrow S(t-1)$
+			\FOR{$s_i\ in\ S(t)$}
+			\STATE OB[i] $\leftarrow p(z(t)|s_i)$
+			\ENDFOR
+			
+			\STATE $Vtb_{k}(t) \leftarrow Viterbi\_Calculate(Vtb_{k}(t-1)$, OB[ ]$)$
+			
 		\ENDIF
 		
-		\STATE // Update the location estimation according to $Q(t)$
-		\STATE $Ped_{loc}(t) \leftarrow update\_location(data_{st:t}, Q(t))$
+		\STATE $Q_t \leftarrow Viterbi\_Decoder(Vtb_{k}(t))$
+		\STATE $Rob_t \leftarrow Update\_Estimation(data_{st:t}, Q_t)$
+		
+		\State return $Q_t, Rob_t$
 	\end{algorithmic}
 \end{algorithm}
-\vspace{-10pt}
 
 
 \section{Evaluation}
@@ -402,7 +394,7 @@ We uses the wheel mobile robot introduced in Section 2 to complete the experimen
 When the starting point is unknown, the convergence performance of the algorithm is closely related to the recognition results of position-related gestures. In general, after at least two consecutive position-recognition gestures need to be correctly recognized, the map matching algorithm based on the gesture recognition is likely to converge. , And correspondingly, in the process of position-related gesture recognition (such as left and right turning) facing indoor plane maps, the error of the heading angle has a greater impact on the attitude recognition results. Therefore, this section first analyzes the heading angle error for the proposed text. The influence of the convergence performance of map matching algorithm. Here, we first define the correct rate of position-related gesture recognition by Equation 10.
 
 \begin{equation}
-	a = b + c
+	{Precison} = \frac{Number\ of\ Correctly\ Detected\ Consecutive\ Two\ Postures}{Total\ Number\ of\ Consecutive\ Two\ Postures}
 \end{equation}
 
 Assume that the distribution of the heading angle estimation error is Gaussian and the average is 0. Based on the original data of the heading angle, a Gaussian distribution-based random number is added to simulate different degrees of error. Figure 7 shows the errors at different heading angles. The variation of the correct rate of position-dependent gesture recognition under the condition of the standard deviation of the distribution. It can be seen from Fig. 7 that the accuracy of position-dependent gesture recognition is stable under certain heading angle error conditions, but when the standard deviation of the error distribution reaches a certain level (T1 is 40 degrees and T2 is 30 degrees), The correct rate dropped rapidly.
@@ -453,12 +445,12 @@ From the principle of dead reckoning technology described in section 2.1 of this
 	\label{fig-acce-error}
 \end{figure}
 
-Figure 10 shows the average positioning error of the mobile robots in the two paths T1 and T2 under different standard deviation values. It can be seen from the figure that, on the one hand, based on a slight increase in the acceleration error, the dead reckoning is based on dead reckoning. The positioning method of the technique rapidly increases the average positioning error, which means that the positioning performance of dead reckoning technology is very sensitive to the acceleration error; on the other hand, compared with the traditional dead reckoning technology, the same acceleration error changes. The positioning error of the positioning algorithm proposed in this paper changes more smoothly, which shows that the positioning algorithm has a certain degree of robustness to the acceleration error.
+Fig. \ref{fig-acce-error} shows the average positioning error of the mobile robots in the two paths T1 and T2 under different standard deviation values. It can be seen from the figure that, on the one hand, based on a slight increase in the acceleration error, the dead reckoning is based on dead reckoning. The positioning method of the technique rapidly increases the average positioning error, which means that the positioning performance of dead reckoning technology is very sensitive to the acceleration error; on the other hand, compared with the traditional dead reckoning technology, the same acceleration error changes. The positioning error of the positioning algorithm proposed in this paper changes more smoothly, which shows that the positioning algorithm has a certain degree of robustness to the acceleration error.
  
 
 \section{Conclusion}
 
-In order to solve the difficult problem of positioning of autonomous mobile robots in dark complex building corridors, subway station corridors, or underground mines after a sudden accident such as a fire, this paper proposes an indoor autonomous mobile robot tracking based on hidden Markov model for map matching assistance. And positioning methods. In the structured indoor environment, this method uses the recognition of position-related gestures to match the motion trajectory of the mobile robot to the indoor map. Compared with the traditional dead reckoning technology, the method can significantly reduce the influence of cumulative error on the positioning accuracy, and for certain The degree of heading angle and acceleration errors are robust. This method does not rely on cameras. It uses only accelerometers, gyroscopes, magnetometers, and known indoor maps installed in autonomous mobile robots to achieve fusion positioning of dead reckoning and map matching techniques, even when the starting point is unknown. In addition, the effective tracking and positioning of mobile robots can also be achieved, with features such as simple deployment, low manufacturing cost, and easy operation. 
+In order to solve the difficult problem of positioning of autonomous mobile robots in dark complex building corridors, subway tunnels, or underground mines after sudden accident such as a fire, this paper proposes an indoor autonomous mobile robot tracking and positioning algorithm based on a novel hidden Markov Model. In the structured indoor environment, this method uses the detection of position-related postures to match the motion trajectory of mobile robot to the abstraction of indoor floor plan. Compared with the traditional dead reckoning technology, the proposed algorithm can significantly reduce the influence of cumulative errors on the positioning accuracy, and is robust to the heading direction and acceleration value noises within a certain error range. This algorithm does not rely on cameras, and uses only motion sensors installed in autonomous mobile robots and known indoor floor plan to achieve fusion positioning of dead reckoning and map matching techniques, even when the starting point is unknown. This algorithm has the characteristics of simple deployment, low manufacturing cost, and easy operation.
 
 %
 % ---- Bibliography ----
